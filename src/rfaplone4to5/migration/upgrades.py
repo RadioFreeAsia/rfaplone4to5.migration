@@ -2,8 +2,12 @@ from plone import api
 
 from zope.component import getGlobalSiteManager
 from plone.app.contenttypes.interfaces import IFile
+from rfa.kaltura2.kaltura_video import IKaltura_Video
 from zope.lifecycleevent.interfaces import IObjectCreatedEvent
+from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from plone.app.contenttypes.subscribers import set_title_description
+from rfa.kaltura2.events.events import addVideo, modifyVideo
  
 def run_pre_migration(context):
     """ Use this for any steps that need to be done before the migration
@@ -30,11 +34,23 @@ def run_pre_migration(context):
     #       zope.lifecycleevent.interfaces.IObjectCreatedEvent"
     #       handler=".subscribers.set_title_description"
     #  />
+    #
+    # Disable Kaltura video add subscriber
+    # <subscriber
+    #       for="rfa.kaltura2.kaltura_video.IKaltura_Video
+    #       zope.lifecycleevent.interfaces.IObjectAddedEvent"
+    #       handler=".events.addVideo"
+    # />
+    #<subscriber
+    #       for="rfa.kaltura2.kaltura_video.IKaltura_Video
+    #       zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    #       handler=".events.modifyVideo"
+    #  />
 
     gsm = getGlobalSiteManager()
     gsm.unregisterHandler(set_title_description,(IFile, IObjectCreatedEvent))
-    
-    
+    gsm.unregisterHandler(addVideo,(IKaltura_Video, IObjectAddedEvent))
+    gsm.unregisterHandler(modifyVideo,(IKaltura_Video, IObjectModifiedEvent))
     
 def run_migration(context):
     setup_tool = api.portal.get_tool('portal_setup')
@@ -51,4 +67,5 @@ def run_post_migration(context):
     gsm = getGlobalSiteManager()
     gsm.registerHandler(set_title_description,
                           (IFile, IObjectCreatedEvent))
-    
+    gsm.registerHandler(addVideo,(IKaltura_Video, IObjectAddedEvent))
+    gsm.registerHandler(modifyVideo,(IKaltura_Video, IObjectModifiedEvent))
