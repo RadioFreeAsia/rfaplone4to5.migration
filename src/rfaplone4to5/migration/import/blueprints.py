@@ -3,6 +3,7 @@ from collective.transmogrifier.interfaces import ISection
 from collective.transmogrifier.interfaces import ISectionBlueprint
 from collective.transmogrifier.utils import defaultKeys
 from collective.transmogrifier.utils import Matcher
+from collective.transmogrifier.utils import defaultMatcher
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import provider
 from zope.interface import implementer
@@ -61,36 +62,33 @@ class ContentTypeMapper(object):
                 item['_type'] = type_maps[item['_type']]
                 
             yield item
-            
+
+
 @implementer(ISection)
 @provider(ISectionBlueprint)
-class Debugger(object):
-    """A Debugger Blueprint to stick in the pipeline somewhere
+class CommentConstructor(object):
+    """Skip Plonesite, subsites folder, and subsite
+       They will (have been) already created
     """
+
     def __init__(self, transmogrifier, name, options, previous):
-        self.transmogrifier = transmogrifier
-        self.name = name
-        self.options = options
         self.previous = previous
+        self.options = options
         self.context = transmogrifier.context
-        
-        if 'path-key' in options:
-            pathkeys = options['path-key'].splitlines()
-        else:
-            pathkeys = defaultKeys(options['blueprint'], name, 'path')
-        self.pathkey = Matcher(*pathkeys)
-        
+        self.typekey = '_type'
+        self.pathkey = '_path'
+        self.comment_map = {}
+
     def __iter__(self):
         for item in self.previous:
-            if item['_path'] == '/rfa/subsites/lao/Multimedia/LaoGame-12302010114149.html/talkback/1374893596':
-                import pdb; pdb.set_trace()
+            if item['_classname'] == "DiscussionItemContainer" and \
+               item['_type'] == 'story' and \
+               item['_id'] == 'talkback':
+                #it's a container, let's skip it.
+                continue
             
-            yield item
-
-
-
-
-
+            if item['_type'] != 'plone.Comment': # not a comment
+                yield item; continue
 
 
 

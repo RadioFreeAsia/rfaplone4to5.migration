@@ -35,8 +35,9 @@
         name="rfaplone4to5.content_type_mapper" />
         
     <utility
-        component=".blueprints.Debugger"
-        name="rfaplone4to5.debugger" />
-    
+      component=".blueprints.CommentConstructor"
+      name="rfaplone4to5.comment_constructor"
+      />
+
 
 </configure>
