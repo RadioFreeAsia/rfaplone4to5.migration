@@ -38,6 +38,10 @@
       component=".blueprints.CommentConstructor"
       name="rfaplone4to5.comment_constructor"
       />
-
+    
+    <utility
+      component=".blueprints.SetFeaturedImage"
+      name="rfaplone4to5.featuredimage_setter"
+    />
 
 </configure>

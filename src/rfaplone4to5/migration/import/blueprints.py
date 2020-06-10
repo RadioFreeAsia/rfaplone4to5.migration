@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from DateTime import DateTime
+from plone import api
 from collective.transmogrifier.interfaces import ISection
 from collective.transmogrifier.interfaces import ISectionBlueprint
 from collective.transmogrifier.utils import defaultKeys
@@ -7,6 +9,10 @@ from collective.transmogrifier.utils import defaultMatcher
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import provider
 from zope.interface import implementer
+from plone.app.discussion.interfaces import IConversation
+from zope.component import createObject
+from plone.folder.interfaces import IExplicitOrdering
+
 
 import logging
 
@@ -38,6 +44,13 @@ class Skipper(object):
                 logger.info('[SKIPPING Subsite] %s', item['_path'])
                 continue
             
+            #skip talkback items
+            if item['_type'] == 'Story' and \
+               item['_id'] == 'talkback' and \
+               item['_classname'] == "DiscussionItemContainer":
+                logger.info('[SKIPPING talkback] %s', item['_path'])
+                continue
+            
             yield item
             
             
@@ -52,11 +65,12 @@ class ContentTypeMapper(object):
         self.context = transmogrifier.context
 
     def __iter__(self):
+        type_maps = {'Section': 'section',
+                     'Story': 'story',
+                     'AudioClip': 'Audio Clip', 
+                     }
+        
         for item in self.previous:
-            type_maps = {'Section': 'section',
-                         'Story': 'story',
-                         'AudioClip': 'Audio Clip', 
-                         }
             if type_maps.get(item['_type']):
                 logger.info('[MAPPING] %s to %s', item['_type'], type_maps[item['_type']])
                 item['_type'] = type_maps[item['_type']]
@@ -66,9 +80,50 @@ class ContentTypeMapper(object):
 
 @implementer(ISection)
 @provider(ISectionBlueprint)
+class SetFeaturedImage(object):
+    """Make sure featured image is at top of folder
+    """
+    def __init__(self, transmogrifier, name, options, previous):
+        self.transmogrifier = transmogrifier
+        self.name = name
+        self.options = options
+        self.previous = previous
+        self.context = transmogrifier.context
+        
+        #Dict storing a image UID -> Story UID
+        self.featured_images = {}
+        
+    def __iter__(self):
+        for item in self.previous:
+                
+            if item["_type"] == "story":
+                #store the featured image
+                featured_image_uid = item.get('featured_image', None)
+                if featured_image_uid is not None:
+                    self.featured_images[featured_image_uid] = item['_uid']
+                yield item; continue;
+            
+            if item["_type"] == "Image":
+                #look for this image in the featured images dict
+                story_uid = self.featured_images.get(item['_uid'], None)
+                if story_uid is not None:
+                    story = api.content.get(UID=story_uid)
+                    #move this image to the top of the story container:
+                    adapter = IExplicitOrdering(story)
+                    adapter.moveObjectsToTop(item['_id'])
+                    #delete from dict to save some memory
+                    del self.featured_images[item['_uid']]
+                    
+                yield item; continue;
+                
+            yield item;
+            
+
+
+@implementer(ISection)
+@provider(ISectionBlueprint)
 class CommentConstructor(object):
-    """Skip Plonesite, subsites folder, and subsite
-       They will (have been) already created
+    """Create a comment on a object
     """
 
     def __init__(self, transmogrifier, name, options, previous):
@@ -81,17 +136,41 @@ class CommentConstructor(object):
 
     def __iter__(self):
         for item in self.previous:
-            if item['_classname'] == "DiscussionItemContainer" and \
-               item['_type'] == 'story' and \
-               item['_id'] == 'talkback':
-                #it's a container, let's skip it.
-                continue
-            
-            if item['_type'] != 'plone.Comment': # not a comment
+            if item['_type'] != 'Discussion Item': # not a comment
                 yield item; continue
+            path = item['_path']
+            
+            pathlist = path.split('/')
+            pathlist.remove('talkback')
+            path = '/'.join(pathlist)
+            
+            
+            ob = self.context.unrestrictedTraverse(path.lstrip('/'), None)
+            if ob is None:
+                yield item; continue # object not found
 
+            #COMMENTS NOT READY
+            logger.info("Skipping comment")
+            yield item
+            #REMOVE WHEN READY
 
+            # XXX make sure comment doesn't exist already?
 
+            conversation = IConversation(ob)
+            comment = createObject('plone.Comment')
+            comment.text              = item['text']
+            comment.author_name       = item['author_name']
+            comment.author_email      = item['author_email']
+            comment.creation_date     = DateTime(item['creation_date']).asdatetime()
+            comment.modification_date = comment.creation_date
+            in_reply_to = item.get('_in_reply_to', 0)
+            if in_reply_to:
+                comment.in_reply_to = self.comment_map[in_reply_to]
+
+            id = conversation.addComment(comment)
+            self.comment_map[item['_comment_id']] = id
+
+               
 
 
             
