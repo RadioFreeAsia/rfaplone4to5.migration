@@ -1,0 +1,5 @@
+src/rfaplone4to5.migration.egg-info/
+src/rfaplone4to5/__pycache__/
+src/rfaplone4to5/migration/__pycache__/
+src/rfaplone4to5/migration/import/__pycache__/
+
