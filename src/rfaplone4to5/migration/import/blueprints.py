@@ -67,7 +67,8 @@ class ContentTypeMapper(object):
     def __iter__(self):
         type_maps = {'Section': 'section',
                      'Story': 'story',
-                     'AudioClip': 'Audio Clip', 
+                     'AudioClip': 'Audio Clip',
+                     'Topic': 'Collection',
                      }
         
         for item in self.previous:
@@ -119,7 +120,92 @@ class SetFeaturedImage(object):
             yield item;
             
 
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class CollectionConstructor(object):
+    """ Create a criterion on a parent Collection """
+    
+    criterionTypes = ('ATBooleanCriterion',
+                      'ATCurrentAuthorCriterion',
+                      'ATDateCriteria',
+                      'ATDateRangeCriterion',
+                      'ATListCriterion',
+                      'ATPathCriterion',
+                      'ATPortalTypeCriterion',
+                      'ATReferenceCriterion',
+                      'ATRelativePathCriterion',
+                      'ATSelectionCriterion',
+                      'ATSimpleIntCriterion',
+                      'ATSimpleStringCriterion',
+                      'ATSortCriterion' )
+    
+    def __init__(self, transmogrifier, name, options, previous):
+        self.previous = previous
+        self.options = options
+        self.context = transmogrifier.context
+        self.typekey = '_type'
+        self.pathkey = '_path'
+        
+    def __iter__(self):
+        for item in self.previous:
+            
+            if item['_type'] not in self.criterionTypes:
+                logger.warning(f'Not a known criterion Type {item["_type"]}')
+                yield item
+                continue
+            
+            #get the parent, which is a Collection
+            path = item['_path']
+            pathlist = path.split('/')
+            path = '/'.join(pathlist[:-1])
+            path = '/' + self.context.id + path
+            
+            newCollection = self.context.unrestrictedTraverse(path,None,)
+            if not newCollection:
+                logger.error("Couldn't find parent Collection")
+                yield item
+                continue
 
+            if newCollection.portal_type != "Collection":
+                logger.error(f"Parent object {path} not a Collection")
+                yield item
+                continue
+            
+            if item['_type'] == 'ATBooleanCriterion':
+                logger.info("ATBooleanCriterion")
+                
+            if item['_type'] == 'ATCurrentAuthorCriterion':
+                logger.info("ATCurrentAuthorCriterion")
+                      
+            if item['_type'] == 'ATDateCriteria':
+                logger.info("ATDateCriteria")
+                
+            if item['_type'] == 'ATDateRangeCriterion':
+                logger.info("ATDateRangeCriterion")
+            if item['_type'] == 'ATListCriterion':
+                logger.info("ATListCriterion")
+            if item['_type'] == 'ATPathCriterion':
+                logger.info("ATPathCriterion")
+            if item['_type'] == 'ATPortalTypeCriterion':
+                logger.info("ATPortalTypeCriterion")
+            if item['_type'] == 'ATReferenceCriterion':
+                logger.info("ATReferenceCriterion")
+            if item['_type'] == 'ATRelativePathCriterion':
+                logger.info("ATRelativePathCriterion")
+            if item['_type'] == 'ATSelectionCriterion':
+                logger.info("ATSelectionCriterion")
+            if item['_type'] == 'ATSimpleIntCriterion':
+                logger.info("ATSimpleIntCriterion")
+            if item['_type'] == 'ATSimpleStringCriterion':
+                logger.info("ATSimpleStringCriterion")
+            
+            if item['_type'] == 'ATSortCriterion':
+                logger.info("ATSortCriterion")
+                newCollection.sort_on = item['field']
+                newCollection.sort_reversed = item['reversed']
+                
+            yield item
+            
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class CommentConstructor(object):

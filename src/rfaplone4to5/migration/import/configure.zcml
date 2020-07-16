@@ -43,5 +43,10 @@
       component=".blueprints.SetFeaturedImage"
       name="rfaplone4to5.featuredimage_setter"
     />
+    
+    <utility
+      component=".blueprints.CollectionConstructor"
+      name="rfaplone4to5.collection_migrator"
+    />
 
 </configure>
