@@ -148,7 +148,7 @@ class CollectionConstructor(object):
         
     def __iter__(self):
         for item in self.previous:
-            
+            query = None
             if item['_type'] not in self.criterionTypes:
                 logger.warning(f'Not a known criterion Type {item["_type"]}')
                 yield item
@@ -196,13 +196,27 @@ class CollectionConstructor(object):
                 logger.info("ATSelectionCriterion")
             if item['_type'] == 'ATSimpleIntCriterion':
                 logger.info("ATSimpleIntCriterion")
+            
             if item['_type'] == 'ATSimpleStringCriterion':
                 logger.info("ATSimpleStringCriterion")
-            
+                field = item["field"]
+                value = item["value"]
+                operation = "plone.app.querystring.operation.selection.any"
+
+                query = dict(i=field, o=operation, v=[value])
+
             if item['_type'] == 'ATSortCriterion':
                 logger.info("ATSortCriterion")
                 newCollection.sort_on = item['field']
                 newCollection.sort_reversed = item['reversed']
+                
+            if query is not None:
+                if newCollection.query is None:
+                    newCollection.query = list()
+                if query in newCollection.query:
+                    pass #allow multuple runs without duplication
+                
+                newCollection.query.append(query)
                 
             yield item
             
