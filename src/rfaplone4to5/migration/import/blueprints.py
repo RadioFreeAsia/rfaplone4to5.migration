@@ -57,24 +57,25 @@ class Skipper(object):
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class ContentTypeMapper(object):
+    type_maps = {'Section': 'section',
+                 'Story': 'story',
+                 'AudioClip': 'Audio Clip',
+                 'Topic': 'Collection',
+                 }    
+
     def __init__(self, transmogrifier, name, options, previous):
         self.transmogrifier = transmogrifier
         self.name = name
         self.options = options
         self.previous = previous
         self.context = transmogrifier.context
-
-    def __iter__(self):
-        type_maps = {'Section': 'section',
-                     'Story': 'story',
-                     'AudioClip': 'Audio Clip',
-                     'Topic': 'Collection',
-                     }
         
+        
+    def __iter__(self):
         for item in self.previous:
-            if type_maps.get(item['_type']):
-                logger.info('[MAPPING] %s to %s', item['_type'], type_maps[item['_type']])
-                item['_type'] = type_maps[item['_type']]
+            if self.type_maps.get(item['_type']):
+                logger.info('[MAPPING] %s to %s', item['_type'], self.type_maps[item['_type']])
+                item['_type'] = self.type_maps[item['_type']]
                 
             yield item
 
@@ -149,6 +150,7 @@ class CollectionConstructor(object):
     def __iter__(self):
         for item in self.previous:
             query = None
+            
             if item['_type'] not in self.criterionTypes:
                 logger.warning(f'Not a known criterion Type {item["_type"]}')
                 yield item
@@ -171,34 +173,78 @@ class CollectionConstructor(object):
                 yield item
                 continue
             
+            logger.info(f"Adding {item['_type']}")
             if item['_type'] == 'ATBooleanCriterion':
-                logger.info("ATBooleanCriterion")
+                logger.error("ATBooleanCriterion Not Implemented")
+                raise NotImplementedError
                 
             if item['_type'] == 'ATCurrentAuthorCriterion':
-                logger.info("ATCurrentAuthorCriterion")
-                      
+                logger.error("ATCurrentAuthorCriterion Not Implemented")
+                raise NotImplementedError
+            
             if item['_type'] == 'ATDateCriteria':
-                logger.info("ATDateCriteria")
+                logger.error("ATDateCriteria Not Implemented")
+                raise NotImplementedError
                 
             if item['_type'] == 'ATDateRangeCriterion':
-                logger.info("ATDateRangeCriterion")
+                logger.error("ATDateRangeCriterion Not Implemented")
+                raise NotImplementedError
+           
             if item['_type'] == 'ATListCriterion':
-                logger.info("ATListCriterion")
+                logger.error("ATListCriterion Not Implemented")
+                raise NotImplementedError
+           
             if item['_type'] == 'ATPathCriterion':
-                logger.info("ATPathCriterion")
+                value = item.get('value')
+                if not value:
+                    return
+                for uid in value:
+                    value = uid
+                    if item["recurse"]:
+                        value += "::1"
+                    query = dict(
+                        i="path",
+                        o="plone.app.querystring.operation.string.absolutePath",
+                        v=value,
+                    )
+                    
             if item['_type'] == 'ATPortalTypeCriterion':
-                logger.info("ATPortalTypeCriterion")
+                values = [ContentTypeMapper.type_maps.get(v,v) for v in item['value']]
+                query = dict(
+                    i="portal_type",
+                    o="plone.app.querystring.operation.selection.any",
+                    v=values,
+                )
+            
             if item['_type'] == 'ATReferenceCriterion':
-                logger.info("ATReferenceCriterion")
+                logger.error("ATReferenceCriterion Not Implemented")
+                raise NotImplementedError
+            
             if item['_type'] == 'ATRelativePathCriterion':
-                logger.info("ATRelativePathCriterion")
+                logger.error("ATRelativePathCriterion Not Implemented")
+                raise NotImplementedError
+            
             if item['_type'] == 'ATSelectionCriterion':
-                logger.info("ATSelectionCriterion")
+                field = item["field"]
+                value = item["value"]
+                operator = item["operator"]
+        
+                if field == "Subject":
+                    if operator == "and":
+                        operation = "plone.app.querystring.operation.selection.all"
+                    else:
+                        operation = "plone.app.querystring.operation.selection.any"
+                else:
+                    operation = "plone.app.querystring.operation.selection.any"
+        
+                query = dict(i=field, o=operation, v=value)
+                
+                
             if item['_type'] == 'ATSimpleIntCriterion':
-                logger.info("ATSimpleIntCriterion")
+                logger.error("ATSimpleIntCriterion Not Implemented")
+                raise NotImplementedError
             
             if item['_type'] == 'ATSimpleStringCriterion':
-                logger.info("ATSimpleStringCriterion")
                 field = item["field"]
                 value = item["value"]
                 operation = "plone.app.querystring.operation.selection.any"
@@ -206,12 +252,11 @@ class CollectionConstructor(object):
                 query = dict(i=field, o=operation, v=[value])
 
             if item['_type'] == 'ATSortCriterion':
-                logger.info("ATSortCriterion")
                 newCollection.sort_on = item['field']
                 newCollection.sort_reversed = item['reversed']
                 
             if query is not None:
-                if newCollection.query is None:
+                if newCollection.query is None or newCollection.query is '':
                     newCollection.query = list()
                 if query in newCollection.query:
                     pass #allow multuple runs without duplication
