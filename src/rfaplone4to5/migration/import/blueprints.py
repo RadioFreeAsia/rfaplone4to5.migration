@@ -187,12 +187,23 @@ class CollectionConstructor(object):
                 raise NotImplementedError
                 
             if item['_type'] == 'ATDateRangeCriterion':
-                logger.error("ATDateRangeCriterion Not Implemented")
-                raise NotImplementedError
+                operator_code = 'date.between'
+                field = item['field']
+                value = [ item['start'], item['end'] ]
+                query = dict(i=field,
+                             o='date.between',
+                             v=value)
            
             if item['_type'] == 'ATListCriterion':
-                logger.error("ATListCriterion Not Implemented")
-                raise NotImplementedError
+                items = item["value"]
+                operator = item["operator"]
+                field = item["field"]
+                query = dict(i=field,
+                             o="plone.app.querystring.operation.selection.{}".format(
+                                 "any" if operator == "or" else "all"
+                                 ),
+                             v=items,
+                )
            
             if item['_type'] == 'ATPathCriterion':
                 value = item.get('value')
