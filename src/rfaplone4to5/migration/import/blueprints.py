@@ -178,23 +178,59 @@ class CollectionConstructor(object):
                 logger.error("ATBooleanCriterion Not Implemented")
                 raise NotImplementedError
                 
-            if item['_type'] == 'ATCurrentAuthorCriterion':
+            elif item['_type'] == 'ATCurrentAuthorCriterion':
                 logger.error("ATCurrentAuthorCriterion Not Implemented")
                 raise NotImplementedError
             
-            if item['_type'] == 'ATDateCriteria':
-                logger.error("ATDateCriteria Not Implemented")
-                raise NotImplementedError
+            elif item['_type'] == 'ATDateCriteria':
+                field = item['field']
+                value = item['value']
+                operation = item.get('operation', '')
                 
-            if item['_type'] == 'ATDateRangeCriterion':
+                dateRange = item.get('dateRange', '')
+                if dateRange == '-':
+                    value = -value
+                    
+                if operation == "within_day":
+                    if value == 0:
+                        operation = "plone.app.querystring.operation.date.today"
+                        query = dict(i=field, o=operation, v=str(value))
+                    else:
+                        date = DateTime() + value
+                        date_range = (date - value,
+                                      date + value)
+                        operation = "plone.app.querystring.operation.date.between"
+                        
+                        query = dict(i=field, o=operation, v=date_range)    
+
+
+                elif operation == "more":
+                    if value == 0:
+                        operation = "plone.app.querystring.operation.date.afterToday"
+                    else:   
+                        operation = (
+                            "plone.app.querystring.operation.date.largerThanRelativeDate"
+                        )
+                    query = dict(i=field, o=operation, v=str(value))
+                    
+                elif operation == "less":
+                    if value == 0:
+                        operation = "plone.app.querystring.operation.date.beforeToday"
+                    else:
+                        operation = "plone.app.querystring.operation.date.lessThanRelativeDate"
+                
+                    query = dict(i=field, o=operation, v=str(value))
+
+                
+            elif item['_type'] == 'ATDateRangeCriterion':
                 operator_code = 'date.between'
                 field = item['field']
                 value = [ item['start'], item['end'] ]
                 query = dict(i=field,
-                             o='date.between',
+                             o='plone.app.querystring.operation.date.between',
                              v=value)
            
-            if item['_type'] == 'ATListCriterion':
+            elif item['_type'] == 'ATListCriterion':
                 items = item["value"]
                 operator = item["operator"]
                 field = item["field"]
@@ -205,7 +241,7 @@ class CollectionConstructor(object):
                              v=items,
                 )
            
-            if item['_type'] == 'ATPathCriterion':
+            elif item['_type'] == 'ATPathCriterion':
                 value = item.get('value')
                 if not value:
                     return
@@ -219,7 +255,7 @@ class CollectionConstructor(object):
                         v=value,
                     )
                     
-            if item['_type'] == 'ATPortalTypeCriterion':
+            elif item['_type'] == 'ATPortalTypeCriterion':
                 values = [ContentTypeMapper.type_maps.get(v,v) for v in item['value']]
                 query = dict(
                     i="portal_type",
@@ -227,15 +263,15 @@ class CollectionConstructor(object):
                     v=values,
                 )
             
-            if item['_type'] == 'ATReferenceCriterion':
+            elif item['_type'] == 'ATReferenceCriterion':
                 logger.error("ATReferenceCriterion Not Implemented")
                 raise NotImplementedError
             
-            if item['_type'] == 'ATRelativePathCriterion':
+            elif item['_type'] == 'ATRelativePathCriterion':
                 logger.error("ATRelativePathCriterion Not Implemented")
                 raise NotImplementedError
             
-            if item['_type'] == 'ATSelectionCriterion':
+            elif item['_type'] == 'ATSelectionCriterion':
                 field = item["field"]
                 value = item["value"]
                 operator = item["operator"]
@@ -251,18 +287,18 @@ class CollectionConstructor(object):
                 query = dict(i=field, o=operation, v=value)
                 
                 
-            if item['_type'] == 'ATSimpleIntCriterion':
+            elif item['_type'] == 'ATSimpleIntCriterion':
                 logger.error("ATSimpleIntCriterion Not Implemented")
                 raise NotImplementedError
             
-            if item['_type'] == 'ATSimpleStringCriterion':
+            elif item['_type'] == 'ATSimpleStringCriterion':
                 field = item["field"]
                 value = item["value"]
                 operation = "plone.app.querystring.operation.selection.any"
 
                 query = dict(i=field, o=operation, v=[value])
 
-            if item['_type'] == 'ATSortCriterion':
+            elif item['_type'] == 'ATSortCriterion':
                 newCollection.sort_on = item['field']
                 newCollection.sort_reversed = item['reversed']
                 
@@ -271,8 +307,8 @@ class CollectionConstructor(object):
                     newCollection.query = list()
                 if query in newCollection.query:
                     pass #allow multuple runs without duplication
-                
-                newCollection.query.append(query)
+                else:
+                    newCollection.query.append(query)
                 
             yield item
             
