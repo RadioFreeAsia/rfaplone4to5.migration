@@ -207,19 +207,22 @@ class CollectionConstructor(object):
                 elif operation == "more":
                     if value == 0:
                         operation = "plone.app.querystring.operation.date.afterToday"
-                    else:   
-                        operation = (
-                            "plone.app.querystring.operation.date.largerThanRelativeDate"
-                        )
-                    query = dict(i=field, o=operation, v=str(value))
+                    elif value > 0:   
+                        operation = "plone.app.querystring.operation.date.largerThanRelativeDate"
+                    elif value < 0:
+                        operation = "plone.app.querystring.operation.date.beforeRelativeDate"
+                        
+                    query = dict(i=field, o=operation, v=str(abs(value)))
                     
                 elif operation == "less":
                     if value == 0:
                         operation = "plone.app.querystring.operation.date.beforeToday"
-                    else:
+                    elif value > 0:
                         operation = "plone.app.querystring.operation.date.lessThanRelativeDate"
+                    elif value < 0:
+                        operation = "plone.app.querystring.operation.date.afterRelativeDate"
                 
-                    query = dict(i=field, o=operation, v=str(value))
+                    query = dict(i=field, o=operation, v=str(abs(value)))
 
                 
             elif item['_type'] == 'ATDateRangeCriterion':
