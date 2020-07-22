@@ -268,8 +268,12 @@ class CollectionConstructor(object):
                 raise NotImplementedError
             
             elif item['_type'] == 'ATRelativePathCriterion':
-                logger.error("ATRelativePathCriterion Not Implemented")
-                raise NotImplementedError
+                field = item["field"]
+                recursive = item["recurse"]
+                value = item["relativePath"]
+            
+                query= dict(i=field, o="plone.app.querystring.operation.string.relativePath",
+                            v=value)
             
             elif item['_type'] == 'ATSelectionCriterion':
                 field = item["field"]
