@@ -13,7 +13,7 @@ from plone.app.discussion.interfaces import IConversation
 from zope.component import createObject
 from plone.folder.interfaces import IExplicitOrdering
 
-
+from zope.annotation.interfaces import IAnnotations
 import logging
 
 
@@ -380,7 +380,7 @@ class CommentConstructor(object):
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class AnnotateObject(object):
-    """ Make any notes necessary for 2nd pass """
+    """ Make any notes necessary on the newly constructed object """
     def __init__(self, transmogrifier, name, options, previous):
         self.transmogrifier = transmogrifier
         self.name = name
@@ -394,18 +394,21 @@ class AnnotateObject(object):
             path = item['_path']   
 
             # if you need to get the object (after the constructor part)
-            obj = self.context.unrestrictedTraverse(
-                safe_unicode(path.lstrip('/')).encode('utf-8'),
-                None,
-            )
+            obj = self.context.unrestrictedTraverse(path.lstrip('/'))
             if not obj:
                 yield item
                 continue
 
-            # do things here
-
-            logger.info('[processing path] %s', pathkey)
-
+            KEY_PREFIX = "rfaplone4to5.migration."
+            #Slideshow(field), 
+            #Video (kaltura and link via cp) 
+            #Featured Image
+            #
+            logger.info('[annotating] %s', path)
+            annotations = IAnnotations(obj)
+            annotations[KEY_PREFIX+"featured_image"] = item.get('featured_image')
+            
+            
             # always end with yielding the item,
             yield item
     

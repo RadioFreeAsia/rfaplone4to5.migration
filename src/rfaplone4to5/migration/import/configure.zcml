@@ -49,4 +49,10 @@
       name="rfaplone4to5.collection_migrator"
     />
 
+    <utility
+      component=".blueprints.AnnotateObject"
+      name="rfaplone4to5.annotate"
+    />
+    
+    
 </configure>
