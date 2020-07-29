@@ -61,6 +61,8 @@ class ContentTypeMapper(object):
                  'Story': 'story',
                  'AudioClip': 'Audio Clip',
                  'Topic': 'Collection',
+                 'PressRelease': 'press release',
+                 'JobPosting': 'job posting'
                  }    
 
     def __init__(self, transmogrifier, name, options, previous):
@@ -237,10 +239,15 @@ class CollectionConstructor(object):
                 items = item["value"]
                 operator = item["operator"]
                 field = item["field"]
+                
+                if field == "review_state":
+                    operation = "plone.app.querystring.operation.selection.any"
+                else:
+                    operation = "plone.app.querystring.operation.selection.{}".format(
+                                  "any" if operator == "or" else "all")
+                
                 query = dict(i=field,
-                             o="plone.app.querystring.operation.selection.{}".format(
-                                 "any" if operator == "or" else "all"
-                                 ),
+                             o=operation,
                              v=items,
                 )
            
@@ -369,8 +376,39 @@ class CommentConstructor(object):
             id = conversation.addComment(comment)
             self.comment_map[item['_comment_id']] = id
 
-               
 
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class AnnotateObject(object):
+    """ Make any notes necessary for 2nd pass """
+    def __init__(self, transmogrifier, name, options, previous):
+        self.transmogrifier = transmogrifier
+        self.name = name
+        self.options = options
+        self.previous = previous
+        self.context = transmogrifier.context
+
+
+    def __iter__(self):
+        for item in self.previous:
+            path = item['_path']   
+
+            # if you need to get the object (after the constructor part)
+            obj = self.context.unrestrictedTraverse(
+                safe_unicode(path.lstrip('/')).encode('utf-8'),
+                None,
+            )
+            if not obj:
+                yield item
+                continue
+
+            # do things here
+
+            logger.info('[processing path] %s', pathkey)
+
+            # always end with yielding the item,
+            yield item
+    
 
             
 @implementer(ISection)
