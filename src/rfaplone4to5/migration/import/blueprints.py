@@ -408,7 +408,6 @@ class AnnotateObject(object):
     
     def annotate_embeded(self, item):
         #get the parent
-        import pdb; pdb.set_trace()
         path = item['_path']
         pathlist = path.split('/cp_container')
         path = self.context.id + pathlist[0]
