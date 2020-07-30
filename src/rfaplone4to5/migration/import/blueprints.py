@@ -381,6 +381,9 @@ class CommentConstructor(object):
 @provider(ISectionBlueprint)
 class AnnotateObject(object):
     """ Make any notes necessary on the newly constructed object """
+
+    KEY_PREFIX = "rfaplone4to5.migration."
+    
     def __init__(self, transmogrifier, name, options, previous):
         self.transmogrifier = transmogrifier
         self.name = name
@@ -388,31 +391,60 @@ class AnnotateObject(object):
         self.previous = previous
         self.context = transmogrifier.context
 
-
     def __iter__(self):
+        
         for item in self.previous:
             path = item['_path']   
-
-            # if you need to get the object (after the constructor part)
-            obj = self.context.unrestrictedTraverse(path.lstrip('/'))
-            if not obj:
-                yield item
-                continue
-
-            KEY_PREFIX = "rfaplone4to5.migration."
-            #Slideshow(field), 
-            #Video (kaltura and link via cp) 
-            #Featured Image
-            #
             logger.info('[annotating] %s', path)
-            annotations = IAnnotations(obj)
-            annotations[KEY_PREFIX+"featured_image"] = item.get('featured_image')
             
+            if item["_type"] == "CompositePack Element":
+                self.annotate_embeded(item)
+                
+            elif item["_type"] == "Story":
+                self.annotate_story(item)
             
             # always end with yielding the item,
             yield item
     
+    def annotate_embeded(self, item):
+        #get the parent
+        import pdb; pdb.set_trace()
+        path = item['_path']
+        pathlist = path.split('/cp_container')
+        path = self.context.id + pathlist[0]
 
+        parent_obj = self.context.unrestrictedTraverse(path)
+        if not parent_obj:
+            return
+        
+        annotations = IAnnotations(parent_obj)
+        
+        atrefs = item.get('_atrefs')
+        if atrefs:
+            viewlet = atrefs.get("viewlet")
+            if any('kaltura_video_box' in s for s in viewlet): 
+                annotations[self.KEY_PREFIX+"cp_kaltura_video"] = item["target"]
+        
+        
+    def annotate_story(self, item):
+        
+        #Slideshow(field), 
+        #Video (kaltura and link via cp) 
+        #Featured Image
+        #
+        path = item['_path']
+        obj = self.context.unrestrictedTraverse(path.lstrip('/'))
+        if not obj:
+            return
+        
+        annotations = IAnnotations(obj)
+        if item.get('featured_image'):
+            annotations[self.KEY_PREFIX+"featured_image"] = item.get('featured_image')
+        if item.get('audio_clip'):
+            annotations[self.KEY_PREFIX+"audio_clip"] = item.get('audio_clip')
+        if item.get('slideshow'):
+            annotations[self.KEY_PREFIX+"slideshow"] = item.get('slideshow')
+      
             
 @implementer(ISection)
 @provider(ISectionBlueprint)
