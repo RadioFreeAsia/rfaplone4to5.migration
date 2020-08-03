@@ -424,7 +424,7 @@ class AnnotateObject(object):
             if any('kaltura_video_box' in s for s in viewlet): 
                 annotations[self.KEY_PREFIX+"cp_kaltura_video"] = (item["target"], item["viewlet"])
             if any('gallery' in s for s in viewlet):
-                annotations[self.KEY_PREFIX+"cp_slideshow"] = (item["target"], item["viewlet"])
+                annotations[self.KEY_PREFIX+"cp_slideshow"] = (item["target"], viewlet)
             
         
         
