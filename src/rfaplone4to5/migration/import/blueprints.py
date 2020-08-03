@@ -394,7 +394,7 @@ class AnnotateObject(object):
     def __iter__(self):
         
         for item in self.previous:
-            path = item['_path']   
+            path = item['_path']
             logger.info('[annotating] %s', path)
             
             if item["_type"] == "CompositePack Element":
@@ -422,7 +422,10 @@ class AnnotateObject(object):
         if atrefs:
             viewlet = atrefs.get("viewlet")
             if any('kaltura_video_box' in s for s in viewlet): 
-                annotations[self.KEY_PREFIX+"cp_kaltura_video"] = item["target"]
+                annotations[self.KEY_PREFIX+"cp_kaltura_video"] = (item["target"], item["viewlet"])
+            if any('gallery' in s for s in viewlet):
+                annotations[self.KEY_PREFIX+"cp_slideshow"] = (item["target"], item["viewlet"])
+            
         
         
     def annotate_story(self, item):
@@ -430,7 +433,8 @@ class AnnotateObject(object):
         #Slideshow(field), 
         #Video (kaltura and link via cp) 
         #Featured Image
-        #
+        #additional images
+        
         path = item['_path']
         obj = self.context.unrestrictedTraverse(path.lstrip('/'))
         if not obj:
@@ -443,6 +447,8 @@ class AnnotateObject(object):
             annotations[self.KEY_PREFIX+"audio_clip"] = item.get('audio_clip')
         if item.get('slideshow'):
             annotations[self.KEY_PREFIX+"slideshow"] = item.get('slideshow')
+        if item.get('additional_images'):
+            annotations[self.KEY_PREFIX+"additional_images"] = item.get('additional_images')
       
             
 @implementer(ISection)
