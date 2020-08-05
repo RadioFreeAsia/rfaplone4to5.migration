@@ -421,10 +421,11 @@ class AnnotateObject(object):
         atrefs = item.get('_atrefs')
         if atrefs:
             viewlet = atrefs.get("viewlet")
-            if any('kaltura_video_box' in s for s in viewlet): 
-                annotations[self.KEY_PREFIX+"cp_kaltura_video"] = (item["target"], item["viewlet"])
-            if any('gallery' in s for s in viewlet):
-                annotations[self.KEY_PREFIX+"cp_slideshow"] = (item["target"], viewlet)
+            if viewlet is not None:    
+                if any('kaltura_video_box' in s for s in viewlet): 
+                    annotations[self.KEY_PREFIX+"cp_kaltura_video"] = (item["target"], item["viewlet"])
+                if any('gallery' in s for s in viewlet):
+                    annotations[self.KEY_PREFIX+"cp_slideshow"] = (item["target"], viewlet)
             
         
         
