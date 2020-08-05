@@ -25,7 +25,28 @@ logger = logging.getLogger('Transmogrifier')
 class Skipper(object):
     """Skip Plonesite, subsites folder, and subsite
        They will (have been) already created
+       ...
+       Skip any paths that consistently give problems.
     """
+    badpaths = ('/rfa/subsites/english/multimedia/MekongProject/banner/content/image1.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image2.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image3.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image4.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image5.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image6.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image7.jpg',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image8.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image1.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image2.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image3.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image4.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image5.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image6.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image7.jpg',
+                '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image8.jpg',
+                '/rfa/subsites/english/news/myanmar/aung-san-suu-kyi/aung-san-suu-kyi',
+    )
+
 
     def __init__(self, transmogrifier, name, options, previous):
         self.transmogrifier = transmogrifier
@@ -49,6 +70,10 @@ class Skipper(object):
                item['_id'] == 'talkback' and \
                item['_classname'] == "DiscussionItemContainer":
                 logger.info('[SKIPPING talkback] %s', item['_path'])
+                continue
+            
+            if item['_path'] in self.badpaths:
+                logger.info(f'[SKIPPING {item["_path"]}')
                 continue
             
             yield item
