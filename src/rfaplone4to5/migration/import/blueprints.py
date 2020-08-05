@@ -45,6 +45,7 @@ class Skipper(object):
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image7.jpg',
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image8.jpg',
                 '/rfa/subsites/english/news/myanmar/aung-san-suu-kyi/aung-san-suu-kyi',
+                '/rfa/subsites/english/news/vietnam/patriotic-citizens-08312009152642.html', # linked captioned image
     )
 
 
@@ -87,7 +88,8 @@ class ContentTypeMapper(object):
                  'AudioClip': 'Audio Clip',
                  'Topic': 'Collection',
                  'PressRelease': 'press release',
-                 'JobPosting': 'job posting'
+                 'JobPosting': 'job posting',
+                 'VideoLink': "Video Link"
                  }    
 
     def __init__(self, transmogrifier, name, options, previous):
