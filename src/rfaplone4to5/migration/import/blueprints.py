@@ -499,7 +499,7 @@ class HubpageFixer(object):
                 #Change item["_type"] to HTML File for text/html
                 #Change to File for non audio types
                 if item["_datafield_file"]["content_type"] == "text/html":
-                    item["_type"] =  "Raw HTML"
+                    item["_type"] = "raw html"
                 elif "audio/" not in item["_datafield_file"]["content_type"]:
                     item["_type"] = "File"
         
