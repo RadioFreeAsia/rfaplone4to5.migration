@@ -89,7 +89,8 @@ class ContentTypeMapper(object):
                  'Topic': 'Collection',
                  'PressRelease': 'press release',
                  'JobPosting': 'job posting',
-                 'VideoLink': "Video Link"
+                 'VideoLink': "Video Link",
+                 'PDF File': "File",
                  }    
 
     def __init__(self, transmogrifier, name, options, previous):
@@ -480,7 +481,29 @@ class AnnotateObject(object):
         if item.get('video_link'):
             annotations[self.KEY_PREFIX+"video_link"] = item.get('video_link')
             
-      
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class HubpageFixer(object):
+    def __init__(self, transmogrifier, name, options, previous):
+        self.transmogrifier = transmogrifier
+        self.name = name
+        self.options = options
+        self.previous = previous
+        self.context = transmogrifier.context
+    
+    def __iter__(self):
+        for item in self.previous:
+            
+            if item["_type"] == "Audio Clip":
+                #Check datafield mimetype
+                #Change item["_type"] to HTML File for text/html
+                #Change to File for non audio types
+                if item["_datafield_file"]["content_type"] == "text/html":
+                    item["_type"] ==  "Raw HTML"
+                elif "audio/" not in item["_datafield_file"]["content_type"]:
+                    item["_type"] == "File"
+        
+            yield item
             
 @implementer(ISection)
 @provider(ISectionBlueprint)

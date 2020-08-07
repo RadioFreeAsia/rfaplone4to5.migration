@@ -53,6 +53,9 @@
       component=".blueprints.AnnotateObject"
       name="rfaplone4to5.annotate"
     />
-    
+    <utility
+      component=".blueprints.HubpageFixer"
+      name="rfaplone4to5.hubpage_fixer"
+    />
     
 </configure>
