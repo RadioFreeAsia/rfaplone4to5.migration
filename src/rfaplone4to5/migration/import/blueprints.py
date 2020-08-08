@@ -495,6 +495,10 @@ class HubpageFixer(object):
         for item in self.previous:
             
             if item["_type"] == "Audio Clip":
+                if item.get("_datafield_file") is None:
+                    yield item
+                    continue
+                    
                 #Check datafield mimetype
                 #Change item["_type"] to HTML File for text/html
                 #Change to File for non audio types
