@@ -67,7 +67,7 @@ class Skipper(object):
                 continue
             
             #skip talkback items
-            if item['_type'] == 'Story' and \
+            if item['_type'] in ('Story', 'PressRelease') and \
                item['_id'] == 'talkback' and \
                item['_classname'] == "DiscussionItemContainer":
                 logger.info('[SKIPPING talkback] %s', item['_path'])
