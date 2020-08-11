@@ -28,7 +28,13 @@ class Skipper(object):
        ...
        Skip any paths that consistently give problems.
     """
-    badpaths = ('/rfa/subsites/english/multimedia/MekongProject/banner/content/image1.jpg',
+    badpaths = ('/rfa/subsites/burmese/commentaries/cyclone_nargis_news',
+                '/rfa/subsites/cantonese/5fb557307cfe7d1b',
+                '/rfa/subsites/cantonese/6e2f592798a86ce2',
+                '/rfa/subsites/cantonese/7fd28fd15e738a2a82f1',
+                '/rfa/subsites/cantonese/commentaries/jctk-04082017090822.html/cp_container/filled_slots/body/2017-04-08.3369033073',
+                '/rfa/subsites/cantonese/news/hk-arrest-10152015093314.html/cp_container/filled_slots/body/2015-10-16.3520230437',
+                '/rfa/subsites/english/multimedia/MekongProject/banner/content/image1.jpg',
                 '/rfa/subsites/english/multimedia/MekongProject/banner/content/image2.jpg',
                 '/rfa/subsites/english/multimedia/MekongProject/banner/content/image3.jpg',
                 '/rfa/subsites/english/multimedia/MekongProject/banner/content/image4.jpg',
