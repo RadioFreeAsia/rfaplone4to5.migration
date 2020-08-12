@@ -146,11 +146,15 @@ class SetFeaturedImage(object):
                 story_uid = self.featured_images.get(item['_uid'], None)
                 if story_uid is not None:
                     story = api.content.get(UID=story_uid)
-                    #move this image to the top of the story container:
-                    adapter = IExplicitOrdering(story)
-                    adapter.moveObjectsToTop(item['_id'])
-                    #delete from dict to save some memory
-                    del self.featured_images[item['_uid']]
+                    try:    
+                        adapter = IExplicitOrdering(story)
+                    except TypeError:
+                        pass
+                    else:
+                        adapter.moveObjectsToTop(item['_id'])
+                    finally:
+                        #delete from dict to save some memory
+                        del self.featured_images[item['_uid']]
                     
                 yield item; continue;
                 
