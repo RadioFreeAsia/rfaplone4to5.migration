@@ -51,7 +51,6 @@ class Skipper(object):
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image7.jpg',
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image8.jpg',
                 '/rfa/subsites/english/news/myanmar/aung-san-suu-kyi/aung-san-suu-kyi',
-                '/rfa/subsites/english/news/vietnam/patriarch-07072008222314.html', # linked captioned image
     )
 
 
