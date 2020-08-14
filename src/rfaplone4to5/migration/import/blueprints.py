@@ -20,6 +20,31 @@ import logging
 logger = logging.getLogger('Transmogrifier')
 
 
+#subsites will be manually created on the destination, so they do not share UID's
+#this is a map between UIDS old plone4 ->new plone5.
+#Use when setting a UID reference that might reference the subsite.
+SUBSITE_UID_MAP = { "b94ea5cb25534de16a27cf14ebc5146b": "fdb1016ffb5047b7a79045a4002e2581", #RFA English
+                    "1139461407fb44dde199fa20b831bf2a": "a5a75aa5a8434eb1b09e058db7bfe503", #RFA Burmese
+                    "861a0515d689434257b9f0987adc9a13": "fd2437af98e7414da4ee931a31e46349", #RFA Cantonese
+                    "3fa001f04d764cbd6801949fbf6f8c77": "2bdabe87706e4b29b9e4e42ab756a37f", #RFA Khmer
+                    "90554ae2948934c4d025a644690fa15d": "861389e9fbbd4151828df57576c62924", #RFA Korean
+                    "386c2bbbb5584fc30f8802d121bc5d39": "b68c9ff589864143a510fcea96aae251", #RFA Lao
+                    "ed1b7dfe708544a0e92682fa4ff35ac7": "0454afd9d6ec4d55b2024615da49e0ab", #RFA Mandarin
+                    "6eddde38850fb0eca03032738196b79e": "27da5e018436415da880ce9121b12f12", #RFA Tibetan
+                    "b11a23cb938d4a5d84d1c28e0ca4108a": "c664001ef333408785ebd74c80618e0e", #RFA Uyghur
+                    "68df45895b53f4eac3dd8a4671b74f3a": "38f720c291e64c1ab90e9cb860c76aa2", #RFA Vietnamese
+                    "6f69153b-5016-4ff6-8264-5a6ad3243efe": "29657d2330214958a2753d1f8b192bf5", #Benar News English
+                    "b19480ac-5916-4649-8d32-bbc70f2a0da9": "16783b1caeaf48f69b74c1f71b942b01", #Benar News Bengali
+                    "baa5c449-0e00-4ceb-9a82-3973fd0e5c77": "20655841735846aeb6d2faa80d247cc9", #Benar News Indonesian
+                    "494305b7-78bc-4868-b2fb-c648b25d41ba": "539f08be85404c79b30cf94cd9867d4d", #Benar News Malay
+                    "2b573b1b-5a9c-432e-b64e-c2fb3f51a9a9": "4d9f4be7f14040a1bbf395effc3e0d96", #Benar News Thai
+                    
+                }
+                    
+                    
+                    
+
+
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class Skipper(object):
@@ -51,34 +76,6 @@ class Skipper(object):
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image7.jpg',
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image8.jpg',
                 '/rfa/subsites/english/news/myanmar/aung-san-suu-kyi/aung-san-suu-kyi',
-                '/rfa/subsites/english/news/vietnam/patriarch-07072008222314.html', # linked captioned image
-                #'/rfa/subsites/khmer/news/social-economy/Transparency-of-Chinese-Loans-to-Cambodia-03222016034452.html/chamroeun1.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Transparency-of-Chinese-Loans-to-Cambodia-03222016034452.html/china-loan-10.html',
-                #'/rfa/subsites/khmer/news/social-economy/Transparency-of-Chinese-Loans-to-Cambodia-03222016034452.html/china-loan.html',
-                #'/rfa/subsites/khmer/news/social-economy/Transparency-of-Chinese-Loans-to-Cambodia-03222016034452.html/constructtion-855.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Transparency-of-Chinese-Loans-to-Cambodia-03222016034452.html/garden.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/trav-75.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots/first',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots/second',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots/third',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots/top',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/filled_slots/body',
-                #'/rfa/subsites/khmer/news/social-economy/Travkod-natural-resort-in-siemreap-04092015052752.html/cp_container/titles',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/1.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/75.jpg',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/h041515ho.mp3',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots/first',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots/second',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots/third',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots/top', 
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/filled_slots/body',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/cp_container/titles',
-                #'/rfa/subsites/khmer/news/social-economy/Trodi-game-of-Khmer-04152015092031.html/titles',
     )
 
 
@@ -173,11 +170,15 @@ class SetFeaturedImage(object):
                 story_uid = self.featured_images.get(item['_uid'], None)
                 if story_uid is not None:
                     story = api.content.get(UID=story_uid)
-                    #move this image to the top of the story container:
-                    adapter = IExplicitOrdering(story)
-                    adapter.moveObjectsToTop(item['_id'])
-                    #delete from dict to save some memory
-                    del self.featured_images[item['_uid']]
+                    try:    
+                        adapter = IExplicitOrdering(story)
+                    except TypeError:
+                        pass
+                    else:
+                        adapter.moveObjectsToTop(item['_id'])
+                    finally:
+                        #delete from dict to save some memory
+                        del self.featured_images[item['_uid']]
                     
                 yield item; continue;
                 
@@ -318,8 +319,10 @@ class CollectionConstructor(object):
                     return
                 for uid in value:
                     value = uid
+                    #if old subsite uid, use new subsite uid - otherwise, do nothing to the value
+                    value = SUBSITE_UID_MAP.get(value, d=value) 
                     if item["recurse"]:
-                        value += "::1"
+                        value += "::1" ## should this be -1 
                     query = dict(
                         i="path",
                         o="plone.app.querystring.operation.string.absolutePath",
