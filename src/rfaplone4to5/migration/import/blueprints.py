@@ -79,6 +79,7 @@ class Skipper(object):
                 '/rfa/subsites/mandarin/rfashipin-old/video/video-player-page/cp_container/filled_slots/first/2010-02-015186648535',
                 '/rfa/subsites/mandarin/rfashipin-old/video/cp_container/filled_slots/first/2010-05-249830491285',
                 '/rfa/subsites/mandarin/video/tpp-10082015163237.html',
+                '/rfa/subsites/vietnamese/multimedia/video-import/bloggers-react-to-blogger-arrests-and-crackdown-08042010131848.html/DiemThi09302010-90.jpg',
     )
 
 
