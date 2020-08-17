@@ -111,7 +111,7 @@ class Skipper(object):
             
             if item['_type'] == 'Topic':
                 path = item['_path']
-                path.replace('/rfa/subsites', '')
+                path = path.replace('/rfa/subsites', '')
                 pathlist = path.split('/')
                 parent_path = '/'.join(pathlist[:-1])
                 parent_path = '/' + self.context.id + parent_path
