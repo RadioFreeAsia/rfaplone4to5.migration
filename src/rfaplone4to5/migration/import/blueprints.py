@@ -321,7 +321,7 @@ class CollectionConstructor(object):
                 for uid in value:
                     value = uid
                     #if old subsite uid, use new subsite uid - otherwise, do nothing to the value
-                    value = SUBSITE_UID_MAP.get(value, d=value) 
+                    value = SUBSITE_UID_MAP.get(value, value) 
                     if item["recurse"]:
                         value += "::1" ## should this be -1 
                     query = dict(
