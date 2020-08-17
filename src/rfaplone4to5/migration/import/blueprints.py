@@ -76,7 +76,12 @@ class Skipper(object):
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image7.jpg',
                 '/rfa/subsites/english/Test-for-Minh-Ha/banner/content/images/image8.jpg',
                 '/rfa/subsites/english/news/myanmar/aung-san-suu-kyi/aung-san-suu-kyi',
-                '/rfa/subsites/english/news/vietnam/patriarch-07072008222314.html', # linked captioned image
+                '/rfa/subsites/mandarin/rfashipin-old/video/video-player-page/cp_container/filled_slots/first/2010-02-015186648535',
+                '/rfa/subsites/mandarin/rfashipin-old/video/cp_container/filled_slots/first/2010-05-249830491285',
+                '/rfa/subsites/mandarin/video/tpp-10082015163237.html',
+                '/rfa/subsites/uyghur/kopxilwaste/video/cp_container/filled_slots/second/2010-10-068989339183',
+                '/rfa/subsites/uyghur/xewerler/medeniyet-tarix/istanbulda-noruz-2018-03232018191016.html/cp_container/filled_slots/body/2018-03-23.7543164676',
+                '/rfa/subsites/vietnamese/multimedia/video-import/bloggers-react-to-blogger-arrests-and-crackdown-08042010131848.html/DiemThi09302010-90.jpg',
     )
 
 
