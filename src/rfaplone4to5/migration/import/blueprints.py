@@ -111,11 +111,13 @@ class Skipper(object):
             
             if item['_type'] == 'Topic':
                 path = item['_path']
+                path.replace('/rfa/subsites', '')
                 pathlist = path.split('/')
                 parent_path = '/'.join(pathlist[:-1])
                 parent_path = '/' + self.context.id + parent_path
                 parent_obj = self.context.unrestrictedTraverse(parent_path,None)
-                if parent_obj and parent_obj.portal_type == "Collection":
+                if hasattr(parent_obj, 'portal_type') \
+                   and parent_obj.portal_type == "Collection":
                     logger.info(f'[SKIPPING Topic] {path} is Child of Collection {parent_path} and not allowed')
                     continue
             
