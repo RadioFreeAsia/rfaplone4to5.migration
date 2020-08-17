@@ -109,6 +109,16 @@ class Skipper(object):
                 logger.info('[SKIPPING talkback] %s', item['_path'])
                 continue
             
+            if item['_type'] == 'Topic':
+                path = item['_path']
+                pathlist = path.split('/')
+                parent_path = '/'.join(pathlist[:-1])
+                parent_path = '/' + self.context.id + parent_path
+                parent_obj = self.context.unrestrictedTraverse(parent_path,None)
+                if parent_obj and parent_obj.portal_type == "Collection":
+                    logger.info(f'[SKIPPING Topic] {path} is Child of Collection {parent_path} and not allowed')
+                    continue
+            
             if item['_path'] in self.badpaths:
                 logger.info(f'[SKIPPING {item["_path"]}')
                 continue
