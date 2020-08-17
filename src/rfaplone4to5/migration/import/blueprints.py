@@ -328,7 +328,7 @@ class CollectionConstructor(object):
                     #if old subsite uid, use new subsite uid - otherwise, do nothing to the value
                     value = SUBSITE_UID_MAP.get(value, value) 
                     if item["recurse"]:
-                        value += "::1" ## should this be -1 
+                        value += "::-1"
                     query = dict(
                         i="path",
                         o="plone.app.querystring.operation.string.absolutePath",
