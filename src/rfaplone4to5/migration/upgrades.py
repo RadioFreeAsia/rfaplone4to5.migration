@@ -95,7 +95,7 @@ def add_resolveuid(context):
             if 'resolveuid' not in image['src']:
                 #we found a broken one.
                 #get uid of image:
-                image_object = context.unrestrictedTraverse(story.absolute_url_path() + '/' + image['src'])
+                image_object = context.unrestrictedTraverse('/'.join(story.getPhysicalPath()) + '/' + image['src'])
                 uuid = IUUID(image_object)
                 #replace <img> src with 'resolveuid/{uuid}'
                 image['src'] = f'resolveuid/{uuid}'
