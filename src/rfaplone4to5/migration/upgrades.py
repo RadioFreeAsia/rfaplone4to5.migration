@@ -1,5 +1,6 @@
 from plone import api
 import transaction
+import zExceptions
 
 from zope.component import getGlobalSiteManager
 from plone.app.contenttypes.interfaces import IFile
@@ -13,6 +14,7 @@ from rfa.kaltura2.events.events import addVideo, modifyVideo
 from bs4 import BeautifulSoup
 from plone.uuid.interfaces import IUUID
 from plone.app.textfield.value import RichTextValue
+
 import logging
 
 logger = logging.getLogger("Plone")
@@ -98,7 +100,14 @@ def add_resolveuid(context):
             if 'resolveuid' not in image['src']:
                 #we found a broken one.
                 #get uid of image:
-                image_object = context.unrestrictedTraverse('/'.join(story.getPhysicalPath()) + '/' + image['src'])
+                try:
+                    image_object = context.unrestrictedTraverse('/'.join(story.getPhysicalPath()) + 
+                                                                '/' + image['src'])
+                except zExceptions.NotFound:
+                    logger.warn("couldn't find image " + '/'.join(story.getPhysicalPath()) + 
+                                                                '/' + image['src'])
+                    continue
+                    
                 uuid = IUUID(image_object)
                 #replace <img> src with 'resolveuid/{uuid}'
                 image['src'] = f'resolveuid/{uuid}'
