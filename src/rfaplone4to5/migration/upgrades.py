@@ -13,6 +13,9 @@ from rfa.kaltura2.events.events import addVideo, modifyVideo
 from bs4 import BeautifulSoup
 from plone.uuid.interfaces import IUUID
 from plone.app.textfield.value import RichTextValue
+import logging
+
+logger = logging.getLogger("Plone")
 
 def run_pre_migration(context):
     """ Use this for any steps that need to be done before the migration
@@ -104,10 +107,12 @@ def add_resolveuid(context):
         if changed:
             count = count + 1
             new = RichTextValue(str(soup), story.text.mimeType, story.text.outputMimeType)
-            story.text = new 
+            story.text = new
+            logger.info("fixed" + '/'.join(story.getPhysicalPath()))
         
         if count >= 100:
             transaction.commit()
             count = 0
             
     transaction.commit()
+    logger.info("Done")
