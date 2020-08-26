@@ -48,4 +48,15 @@
       profile="rfaplone4to5.migration:default"
       />
 
+  <genericsetup:upgradeStep
+      title="rfaplone4to5.add_resolveuid"
+      description="Fix TinyMCE Images (optional) "
+      source="0004"
+      destination="0005"
+      handler="rfaplone4to5.migration.upgrades.add_resolveuid"
+      sortkey="1"
+      profile="rfaplone4to5.migration:default"
+      />
+
+   
 </configure>

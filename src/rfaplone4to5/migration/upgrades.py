@@ -1,4 +1,5 @@
 from plone import api
+import transaction
 
 from zope.component import getGlobalSiteManager
 from plone.app.contenttypes.interfaces import IFile
@@ -8,7 +9,11 @@ from zope.lifecycleevent.interfaces import IObjectAddedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent
 from plone.app.contenttypes.subscribers import set_title_description
 from rfa.kaltura2.events.events import addVideo, modifyVideo
- 
+
+from bs4 import BeautifulSoup
+from plone.uuid.interfaces import IUUID
+from plone.app.textfield.value import RichTextValue
+
 def run_pre_migration(context):
     """ Use this for any steps that need to be done before the migration
 
@@ -69,3 +74,41 @@ def run_post_migration(context):
                           (IFile, IObjectCreatedEvent))
     gsm.registerHandler(addVideo,(IKaltura_Video, IObjectAddedEvent))
     gsm.registerHandler(modifyVideo,(IKaltura_Video, IObjectModifiedEvent))
+    
+def add_resolveuid(context):
+    
+    story_brains = api.content.find(portal_type="story")
+    count = 0
+    for brain in story_brains:
+        story = brain.getObject()
+
+        # A broken text field contains an <img> tag with class="image-inline caption" \
+        # and src attribute does not contain 'resolveuid'
+        #example: <p><img src="200803-PH-covid-inside.jpg" class="image-inline captioned" /></p>
+        import pdb; pdb.set_trace()
+        if story.text is None:
+            continue
+        
+        soup = BeautifulSoup(story.text.raw, "html.parser")
+        images = soup.findAll('img', class_="image-inline")
+        changed = False
+        for image in images:
+            if 'resolveuid' not in image['src']:
+                #we found a broken one.
+                #get uid of image:
+                image_object = context.unrestrictedTraverse(story.absolute_url_path() + '/' + image['src'])
+                uuid = IUUID(image_object)
+                #replace <img> src with 'resolveuid/{uuid}'
+                image['src'] = f'resolveuid/{uuid}'
+                changed = True
+                
+        if changed:
+            count = count + 1
+            new = RichTextValue(str(soup), story.text.mimeType, story.text.outputMimeType)
+            story.text = new 
+        
+        if count >= 100:
+            transaction.commit()
+            count = 0
+            
+    transaction.commit()
