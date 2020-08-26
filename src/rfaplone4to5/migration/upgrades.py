@@ -111,11 +111,13 @@ def add_resolveuid(context):
                 else:
                     image_scale = None
                     
-                    
                 try:
                     image_object = context.unrestrictedTraverse(story_path + '/' + image_id)
                 except zExceptions.NotFound:
                     logger.warn("couldn't find image: " + story_path + '/' + image_id)
+                    continue
+                except KeyError:
+                    logger.warn(f"image doesn't exist: {image_id}")
                     continue
                     
                 uuid = IUUID(image_object)
