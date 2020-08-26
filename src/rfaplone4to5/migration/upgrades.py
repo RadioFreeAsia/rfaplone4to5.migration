@@ -100,24 +100,37 @@ def add_resolveuid(context):
             if 'resolveuid' not in image['src']:
                 #we found a broken one.
                 #get uid of image:
+                
+                #handle image scale - ex: 'foo.jpeg/@@images/image/thumb'    
+                image_split = image['src'].split('@@images')
+                image_id = image_split[0]
+                if len(image_split) > 1:
+                    image_scale = image_split[1]
+                else:
+                    image_scale = None
+                    
+                    
                 try:
                     image_object = context.unrestrictedTraverse('/'.join(story.getPhysicalPath()) + 
-                                                                '/' + image['src'])
+                                                                '/' + image_id)
                 except zExceptions.NotFound:
                     logger.warn("couldn't find image " + '/'.join(story.getPhysicalPath()) + 
-                                                                '/' + image['src'])
+                                                                '/' + image_id)
                     continue
                     
                 uuid = IUUID(image_object)
                 #replace <img> src with 'resolveuid/{uuid}'
-                image['src'] = f'resolveuid/{uuid}'
+                if image_scale is not None:
+                    image['src'] = f'resolveuid/{uuid}/@@images/{image_scale}'
+                else:
+                    image['src'] = f'resolveuid/{uuid}'
                 changed = True
                 
         if changed:
             count = count + 1
             new = RichTextValue(str(soup), story.text.mimeType, story.text.outputMimeType)
             story.text = new
-            logger.info("fixed" + '/'.join(story.getPhysicalPath()))
+            logger.info("fixed " + '/'.join(story.getPhysicalPath()))
         
         if count >= 100:
             transaction.commit()
