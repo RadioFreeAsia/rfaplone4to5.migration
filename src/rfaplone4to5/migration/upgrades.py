@@ -85,7 +85,6 @@ def add_resolveuid(context):
         # A broken text field contains an <img> tag with class="image-inline caption" \
         # and src attribute does not contain 'resolveuid'
         #example: <p><img src="200803-PH-covid-inside.jpg" class="image-inline captioned" /></p>
-        import pdb; pdb.set_trace()
         if story.text is None:
             continue
         
