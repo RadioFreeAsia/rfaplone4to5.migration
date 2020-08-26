@@ -96,6 +96,8 @@ def add_resolveuid(context):
         soup = BeautifulSoup(story.text.raw, "html.parser")
         images = soup.findAll('img', class_="image-inline")
         changed = False
+        story_path = '/'.join(story.getPhysicalPath())
+        logger.info(f"processing {story_path}")
         for image in images:
             if 'resolveuid' not in image['src']:
                 #we found a broken one.
@@ -111,11 +113,9 @@ def add_resolveuid(context):
                     
                     
                 try:
-                    image_object = context.unrestrictedTraverse('/'.join(story.getPhysicalPath()) + 
-                                                                '/' + image_id)
+                    image_object = context.unrestrictedTraverse(story_path + '/' + image_id)
                 except zExceptions.NotFound:
-                    logger.warn("couldn't find image " + '/'.join(story.getPhysicalPath()) + 
-                                                                '/' + image_id)
+                    logger.warn("couldn't find image: " + story_path + '/' + image_id)
                     continue
                     
                 uuid = IUUID(image_object)
