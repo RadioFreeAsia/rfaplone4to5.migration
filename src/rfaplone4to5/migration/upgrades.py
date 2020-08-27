@@ -119,6 +119,11 @@ def add_resolveuid(context):
                 except KeyError:
                     logger.warning(f"image doesn't exist: {image_id}")
                     continue
+                except IndexError:  #string index out of range
+                    logger.warning(f"Couldn't fix image at: " + story_path + '/' + image_id)
+                    #Honestly don't know why this happens
+                    continue
+                
                     
                 uuid = IUUID(image_object)
                 #replace <img> src with 'resolveuid/{uuid}'
