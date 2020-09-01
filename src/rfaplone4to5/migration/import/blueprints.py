@@ -483,7 +483,7 @@ class AnnotateObject(object):
             if item["_type"] == "CompositePack Element":
                 self.annotate_embeded(item)
                 
-            elif item["_type"] in ("story", 'press release') :
+            elif item["_type"] in ("story", 'press release'):
                 self.annotate_story(item)
             
             # always end with yielding the item,
