@@ -335,7 +335,8 @@ class CollectionConstructor(object):
             elif item['_type'] == 'ATPathCriterion':
                 value = item.get('value')
                 if not value:
-                    return
+                    yield item
+                    continue
                 for uid in value:
                     value = uid
                     #if old subsite uid, use new subsite uid - otherwise, do nothing to the value
