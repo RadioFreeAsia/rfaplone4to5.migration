@@ -4,7 +4,7 @@ from plone import api
 from collective.transmogrifier.interfaces import ISection
 from collective.transmogrifier.interfaces import ISectionBlueprint
 from collective.transmogrifier.utils import defaultKeys
-from collective.transmogrifier.utils import Matcher
+from collective.transmogrifier.utils import Matcher, Condition
 from collective.transmogrifier.utils import defaultMatcher
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import provider
@@ -432,25 +432,19 @@ class CommentConstructor(object):
             
             pathlist = path.split('/')
             pathlist.remove('talkback')
-            path = '/'.join(pathlist)
+            path = '/'.join(pathlist[:-1])
             
             
             ob = self.context.unrestrictedTraverse(path.lstrip('/'), None)
             if ob is None:
                 yield item; continue # object not found
 
-            #COMMENTS NOT READY
-            logger.info("Skipping comment")
-            yield item
-            #REMOVE WHEN READY
-
-            # XXX make sure comment doesn't exist already?
-
             conversation = IConversation(ob)
+            
             comment = createObject('plone.Comment')
             comment.text              = item['text']
-            comment.author_name       = item['author_name']
-            comment.author_email      = item['author_email']
+            comment.author_name       = item.get('author_name') 
+            comment.author_email      = item.get('author_email')
             comment.creation_date     = DateTime(item['creation_date']).asdatetime()
             comment.modification_date = comment.creation_date
             in_reply_to = item.get('_in_reply_to', 0)
@@ -458,7 +452,9 @@ class CommentConstructor(object):
                 comment.in_reply_to = self.comment_map[in_reply_to]
 
             id = conversation.addComment(comment)
-            self.comment_map[item['_comment_id']] = id
+            self.comment_map[item['_id']] = id
+            
+            yield item
 
 
 @implementer(ISection)
@@ -604,4 +600,32 @@ class Example(object):
             # always end with yielding the item,
             # unless you don't want it imported, or want
             # to bail on the rest of the pipeline
+            yield item
+
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class TimezoneFixerSection(object):
+    """
+    Fixes UnknownTimeZoneError: (UnknownTimeZoneError('GMT+1',),
+    by replacing the (unknown) GMT+x timezone with Etc/GMT+x
+    """
+
+    def __init__(self, transmogrifier, name, options, previous):
+        keys = options.get('keys') or 'regexp:(.*[Dd]ate)$'
+        self.keys = Matcher(*keys.splitlines())
+        self.condition = Condition(options.get('condition', 'python:True'),
+                                   transmogrifier, name, options)
+        self.previous = previous
+
+    def __iter__(self):
+        for item in self.previous:
+            if self.condition(item):
+                for key in item.keys():
+                    match = self.keys(key)[1]
+                    if match:
+                        try:
+                            item[key] = item[key].replace(" GMT", " Etc/GMT")
+                        except AttributeError:  #No attribute named 'replace' b/c it's not a string
+                            pass
+
             yield item

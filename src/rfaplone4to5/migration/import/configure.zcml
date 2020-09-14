@@ -57,5 +57,9 @@
       component=".blueprints.HubpageFixer"
       name="rfaplone4to5.hubpage_fixer"
     />
+    <utility
+      component=".blueprints.TimezoneFixerSection"
+      name="rfaplone4to5.timezone_fixer"
+    />
     
 </configure>
