@@ -475,8 +475,7 @@ class CommentConstructor(object):
             item_tmp[workflowhistorykey]['comment_review_workflow'] = \
                 item_tmp[workflowhistorykey].pop('comment_workflow')
             comment.workflow_history.data = item_tmp[workflowhistorykey]
-
-            import pdb; pdb.set_trace()
+            
             # update security
             workflows = self.wftool.getWorkflowsFor(comment)
             if workflows:
