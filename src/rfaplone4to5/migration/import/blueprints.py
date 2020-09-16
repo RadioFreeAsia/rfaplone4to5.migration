@@ -12,6 +12,8 @@ from zope.interface import implementer
 from plone.app.discussion.interfaces import IConversation
 from zope.component import createObject
 from plone.folder.interfaces import IExplicitOrdering
+from Acquisition import aq_base
+from Products.CMFCore.utils import getToolByName
 
 from zope.annotation.interfaces import IAnnotations
 import logging
@@ -410,6 +412,10 @@ class CollectionConstructor(object):
                 
             yield item
             
+            
+
+from BTrees.LLBTree import LLSet
+
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class CommentConstructor(object):
@@ -423,6 +429,7 @@ class CommentConstructor(object):
         self.typekey = '_type'
         self.pathkey = '_path'
         self.comment_map = {}
+        self.wftool = getToolByName(self.context, 'portal_workflow')
 
     def __iter__(self):
         for item in self.previous:
@@ -454,6 +461,27 @@ class CommentConstructor(object):
             id = conversation.addComment(comment)
             self.comment_map[item['_id']] = id
             
+            
+            item_tmp = item
+            workflowhistorykey = "_workflow_history"
+            # get back datetime stamp and set the workflow history
+            for workflow in item_tmp[workflowhistorykey]:
+                for k, workflow2 in enumerate(item_tmp[workflowhistorykey][workflow]):  # noqa
+                    if 'time' in item_tmp[workflowhistorykey][workflow][k]:
+                        item_tmp[workflowhistorykey][workflow][k]['time'] = DateTime(  # noqa
+                            item_tmp[workflowhistorykey][workflow][k]['time'])  # noqa
+                                    
+            #change workflow key/name from 'comment_worklfow' to 'comment_review_workflow'
+            item_tmp[workflowhistorykey]['comment_review_workflow'] = \
+                item_tmp[workflowhistorykey].pop('comment_workflow')
+            comment.workflow_history.data = item_tmp[workflowhistorykey]
+
+            import pdb; pdb.set_trace()
+            # update security
+            workflows = self.wftool.getWorkflowsFor(comment)
+            if workflows:
+                workflows[0].updateRoleMappingsFor(comment)
+
             yield item
 
 
