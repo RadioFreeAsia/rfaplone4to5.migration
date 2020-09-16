@@ -446,7 +446,19 @@ class CommentConstructor(object):
             if ob is None:
                 yield item; continue # object not found
 
+            logger.info("importing Comment on %s", ob)
             conversation = IConversation(ob)
+
+            #check to see if comment already exists
+            already_exists = False
+            for comment in conversation.getComments():
+                if comment.text == item['text']:
+                    already_exists = True
+                    continue
+                
+            if already_exists:
+                logger.info('comment already exists, skipping')
+                yield item; continue
             
             comment = createObject('plone.Comment')
             comment.text              = item['text']
