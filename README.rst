@@ -1,12 +1,8 @@
-.. This README is meant for consumption by humans and pypi. Pypi can render rst files so please do not use Sphinx features.
-   If you want to learn more about writing documentation, please check out: http://docs.plone.org/about/documentation_styleguide.html
-   This text does not appear on pypi or github. It is a comment.
-
 ======================
 rfaplone4to5.migration
 ======================
 
-Tell me what your product does
+This is a transmogrifier product to specifically import RFA's plone installation, but can be used as an example for other similar transmogrifier pipelines
 
 Features
 --------
