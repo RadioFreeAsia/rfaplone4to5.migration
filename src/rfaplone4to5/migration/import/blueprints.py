@@ -84,6 +84,7 @@ class Skipper(object):
                 '/rfa/subsites/mandarin/yataibaodao/dalailama-10282010114739.html',
                 '/rfa/subsites/uyghur/kopxilwaste/video/cp_container/filled_slots/second/2010-10-068989339183',
                 '/rfa/subsites/uyghur/xewerler/medeniyet-tarix/istanbulda-noruz-2018-03232018191016.html/cp_container/filled_slots/body/2018-03-23.7543164676',
+                '/rfa/subsites/vietnamese/in_depth/Two-professors-theorize-on-bin-laden-hideout-vlong-02212009132321.html',
                 '/rfa/subsites/vietnamese/multimedia/video-import/bloggers-react-to-blogger-arrests-and-crackdown-08042010131848.html/DiemThi09302010-90.jpg',
                 '/rfa/subsites/korean/news/k020907ne-yk.mp3-20070209.html',
     )
