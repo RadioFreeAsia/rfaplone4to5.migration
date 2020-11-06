@@ -62,4 +62,9 @@
       name="rfaplone4to5.timezone_fixer"
     />
     
+    <utility
+      component=".blueprints.CopyKeywords"
+      name="rfaplone4to5.copy_keywords"
+    />
+    
 </configure>

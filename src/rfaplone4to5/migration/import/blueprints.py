@@ -207,6 +207,47 @@ class SetFeaturedImage(object):
                 
             yield item;
             
+            
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class CopyKeywords(object):
+    """Take standard and extended keywords and add them together for 'subjects' field
+    """
+
+    def __init__(self, transmogrifier, name, options, previous):
+        self.transmogrifier = transmogrifier
+        self.name = name
+        self.options = options
+        self.previous = previous
+        self.context = transmogrifier.context
+
+        if 'path-key' in options:
+            pathkeys = options['path-key'].splitlines()
+        else:
+            pathkeys = defaultKeys(options['blueprint'], name, 'path')
+        self.pathkey = Matcher(*pathkeys)
+
+    def __iter__(self):
+        for item in self.previous:
+            if item.get('_type') != 'Story':
+                yield item
+                continue
+            if item.get('_id') == "talkback":
+                yield item
+                continue
+            
+            keywords = item['standard_keywords'] + item['extended_keywords']
+
+            while True:
+                try:
+                    keywords.remove('')
+                except ValueError:
+                    break;
+
+            item['subjects'] = keywords
+            
+            yield item
+
 
 @implementer(ISection)
 @provider(ISectionBlueprint)
@@ -496,8 +537,8 @@ class CommentConstructor(object):
                 workflows[0].updateRoleMappingsFor(comment)
 
             yield item
-
-
+            
+            
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class AnnotateObject(object):
