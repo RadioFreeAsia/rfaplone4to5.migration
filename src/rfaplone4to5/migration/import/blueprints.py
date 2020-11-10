@@ -244,7 +244,7 @@ class CopyKeywords(object):
                 except ValueError:
                     break;
 
-            item['subjects'] = keywords
+            item['subject'] = keywords
             
             yield item
 
