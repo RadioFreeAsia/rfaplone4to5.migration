@@ -25,21 +25,22 @@ logger = logging.getLogger('Transmogrifier')
 #subsites will be manually created on the destination, so they do not share UID's
 #this is a map between UIDS old plone4 ->new plone5.
 #Use when setting a UID reference that might reference the subsite.
-SUBSITE_UID_MAP = { "b94ea5cb25534de16a27cf14ebc5146b": "fdb1016ffb5047b7a79045a4002e2581", #RFA English
-                    "1139461407fb44dde199fa20b831bf2a": "a5a75aa5a8434eb1b09e058db7bfe503", #RFA Burmese
-                    "861a0515d689434257b9f0987adc9a13": "fd2437af98e7414da4ee931a31e46349", #RFA Cantonese
-                    "3fa001f04d764cbd6801949fbf6f8c77": "2bdabe87706e4b29b9e4e42ab756a37f", #RFA Khmer
-                    "90554ae2948934c4d025a644690fa15d": "861389e9fbbd4151828df57576c62924", #RFA Korean
-                    "386c2bbbb5584fc30f8802d121bc5d39": "b68c9ff589864143a510fcea96aae251", #RFA Lao
-                    "ed1b7dfe708544a0e92682fa4ff35ac7": "0454afd9d6ec4d55b2024615da49e0ab", #RFA Mandarin
-                    "6eddde38850fb0eca03032738196b79e": "27da5e018436415da880ce9121b12f12", #RFA Tibetan
-                    "b11a23cb938d4a5d84d1c28e0ca4108a": "c664001ef333408785ebd74c80618e0e", #RFA Uyghur
-                    "68df45895b53f4eac3dd8a4671b74f3a": "38f720c291e64c1ab90e9cb860c76aa2", #RFA Vietnamese
-                    "6f69153b-5016-4ff6-8264-5a6ad3243efe": "29657d2330214958a2753d1f8b192bf5", #Benar News English
-                    "b19480ac-5916-4649-8d32-bbc70f2a0da9": "16783b1caeaf48f69b74c1f71b942b01", #Benar News Bengali
-                    "baa5c449-0e00-4ceb-9a82-3973fd0e5c77": "20655841735846aeb6d2faa80d247cc9", #Benar News Indonesian
-                    "494305b7-78bc-4868-b2fb-c648b25d41ba": "539f08be85404c79b30cf94cd9867d4d", #Benar News Malay
-                    "2b573b1b-5a9c-432e-b64e-c2fb3f51a9a9": "4d9f4be7f14040a1bbf395effc3e0d96", #Benar News Thai
+SUBSITE_UID_MAP = { "b94ea5cb25534de16a27cf14ebc5146b": "8e4a64b88944430e8176ec0246c16791", #RFA English
+                    "1139461407fb44dde199fa20b831bf2a": "0513ae1803244ea49d8386488c674792", #RFA Burmese
+                    "861a0515d689434257b9f0987adc9a13": "612b18f8da1e49998f5c02a07b139f14", #RFA Cantonese
+                    "3fa001f04d764cbd6801949fbf6f8c77": "00522c941ee648d888d9812de57c86d8", #RFA Khmer
+                    "90554ae2948934c4d025a644690fa15d": "267ae7c7631545ad990f871b8e4829ca", #RFA Korean
+                    "386c2bbbb5584fc30f8802d121bc5d39": "142595ab036e47fa90a69acbc3f3618f", #RFA Lao
+                    "ed1b7dfe708544a0e92682fa4ff35ac7": "f2d512cd11b741c9b5799d2479ed2316", #RFA Mandarin
+                    "6eddde38850fb0eca03032738196b79e": "2e682c8db7b242a397540ad18b12841e", #RFA Tibetan
+                    "b11a23cb938d4a5d84d1c28e0ca4108a": "d768f385904e4248a7c62e43e167a015", #RFA Uyghur
+                    "68df45895b53f4eac3dd8a4671b74f3a": "a9ef99005b4843468baf2403de5642e2", #RFA Vietnamese
+                    "86204499-5db6-4538-b6f9-36b580b0e6ce": "016fb0a7e679410b8babc377fa672c94", #RFA About
+                    "6f69153b-5016-4ff6-8264-5a6ad3243efe": "062f5af91d2a4b8b801d01bd046c3774", #Benar News English
+                    "b19480ac-5916-4649-8d32-bbc70f2a0da9": "01123d0547a34f8ea11788abaf0a8fac", #Benar News Bengali
+                    "baa5c449-0e00-4ceb-9a82-3973fd0e5c77": "61bcd2d70fb94fbebd47f552919694d3", #Benar News Indonesian
+                    "494305b7-78bc-4868-b2fb-c648b25d41ba": "c74f2c7a723248ebba82568cc4c70fb6", #Benar News Malay
+                    "2b573b1b-5a9c-432e-b64e-c2fb3f51a9a9": "3409f01121d94f0881282545a3006023", #Benar News Thai
                     
                 }
                     
