@@ -566,7 +566,7 @@ class VideoPathFix(object):
             subsite = pathlist[1]
             
             parent = self.context.unrestrictedTraverse(
-                safe_unicode(parentpath.lstrip('/')).encode('utf-8'),
+                parentpath.lstrip('/'),
                 None,
             )
             if parent:
