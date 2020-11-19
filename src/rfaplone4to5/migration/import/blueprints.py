@@ -229,14 +229,14 @@ class CopyKeywords(object):
         self.pathkey = Matcher(*pathkeys)
 
     def __iter__(self):
-        for item in self.previous:
-            if item.get('_type') != 'Story':
+        for item in self.previous: 
+            if item.get('_type') != 'story':
                 yield item
                 continue
             if item.get('_id') == "talkback":
                 yield item
                 continue
-            
+          
             keywords = item['standard_keywords'] + item['extended_keywords']
 
             while True:
