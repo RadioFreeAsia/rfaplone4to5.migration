@@ -561,9 +561,9 @@ class VideoPathFix(object):
                 continue
                      
             pathlist = path.split('/')
-            parentpath = '/'.join(path[:-1])
-            video_id = path[-1]
-            subsite = path[0]
+            parentpath = '/'.join(pathlist[:-1])
+            video_id = pathlist[-1]
+            subsite = pathlist[1]
             
             parent = self.context.unrestrictedTraverse(
                 safe_unicode(parentpath.lstrip('/')).encode('utf-8'),
