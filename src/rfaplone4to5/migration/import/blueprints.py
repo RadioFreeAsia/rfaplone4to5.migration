@@ -14,7 +14,7 @@ from zope.component import createObject
 from plone.folder.interfaces import IExplicitOrdering
 from Acquisition import aq_base
 from Products.CMFCore.utils import getToolByName
-
+from Products.CMFCore.interfaces import IFolderish
 from zope.annotation.interfaces import IAnnotations
 import logging
 
@@ -541,6 +541,7 @@ class CommentConstructor(object):
             yield item
             
 
+
 @implementer(ISection)
 @provider(ISectionBlueprint)
 class VideoPathFix(object):
@@ -569,7 +570,7 @@ class VideoPathFix(object):
                 parentpath.lstrip('/'),
                 None,
             )
-            if parent:
+            if parent and IFolderish.providedBy(parent):
                 #do nothing - video will import correctly without path change
                 yield item
                 continue
