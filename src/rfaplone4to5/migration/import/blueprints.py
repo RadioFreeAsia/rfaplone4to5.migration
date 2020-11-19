@@ -540,6 +540,44 @@ class CommentConstructor(object):
 
             yield item
             
+
+@implementer(ISection)
+@provider(ISectionBlueprint)
+class VideoPathFix(object):
+    def __init__(self, transmogrifier, name, options, previous):
+        self.transmogrifier = transmogrifier
+        self.name = name
+        self.options = options
+        self.previous = previous
+        self.context = transmogrifier.context
+
+    def __iter__(self):
+        
+        for item in self.previous:
+            path = item['_path']
+            
+            if item['_type'] != 'Kaltura Video':
+                yield item
+                continue
+                     
+            pathlist = path.split('/')
+            parentpath = '/'.join(path[:-1])
+            video_id = path[-1]
+            subsite = path[0]
+            
+            parent = self.context.unrestrictedTraverse(
+                safe_unicode(parentpath.lstrip('/')).encode('utf-8'),
+                None,
+            )
+            if parent:
+                #do nothing - video will import correctly without path change
+                yield item
+                continue
+            
+            parentpath = f"{subsite}/video-import"
+            item['_path'] = f"{parentpath}/{video_id}"
+            
+            yield item
             
 @implementer(ISection)
 @provider(ISectionBlueprint)

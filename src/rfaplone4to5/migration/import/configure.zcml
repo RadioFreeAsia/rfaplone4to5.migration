@@ -67,4 +67,9 @@
       name="rfaplone4to5.copy_keywords"
     />
     
+    <utility
+      component=".blueprints.VideoPathFix"
+      name="rfaplone4to5.videopath_fixer"
+    />
+    
 </configure>
