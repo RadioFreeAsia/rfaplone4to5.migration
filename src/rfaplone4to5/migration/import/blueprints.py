@@ -246,6 +246,7 @@ class CopyKeywords(object):
                     break;
 
             item['subject'] = keywords
+            item['subjects'] = keywords
             
             yield item
 
